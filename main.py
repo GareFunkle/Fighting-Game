@@ -13,7 +13,6 @@ clock = pygame.time.Clock()
 
 
 # load bg image
-
 bg_image = pygame.image.load(data.BG_IMAGE).convert_alpha()
 
 # load sprite sheets
@@ -22,8 +21,6 @@ wizard_sheet = pygame.image.load(data.WIZARD).convert_alpha()
 
 
 # function for join bg
-
-
 def draw_bg():
     scaled_bg = pygame.transform.scale(
         bg_image, (data.SCREEN_WIDTH, data.SCREEN_HEIGHT))
@@ -39,9 +36,9 @@ def draw_health_bar(health, x, y):
 
 
 #  create an instance of fighters
-fighter_1 = Fighter(200, 410, data.WARRIOR_DATA,
+fighter_1 = Fighter(200, 410, False, data.WARRIOR_DATA,
                     warrior_sheet, data.WARRIOR_ANIMATION_STEPS)
-fighter_2 = Fighter(700, 410, data.WIZARD_DATA,
+fighter_2 = Fighter(700, 410, True, data.WIZARD_DATA,
                     wizard_sheet, data.WIZARD_ANIMATION_STEPS)
 
 # game loop
@@ -60,8 +57,11 @@ while True:
     fighter_1.move(screen, fighter_2)
     # fighter_2.move()
 
-    # draw fighter
+    # update fighters
+    fighter_1.update()
+    fighter_2.update()
 
+    # draw fighter
     fighter_1.draw(screen)
     fighter_2.draw(screen)
 
@@ -72,6 +72,5 @@ while True:
 
     pygame.display.update()
 # update display
-
 
 pygame.quit()

@@ -4,17 +4,19 @@ from Data.Screen import data
 
 
 class Fighter():
-    def __init__(self, x, y, data, sprite_sheet, animation_steps):
+    def __init__(self, x, y, flip,  data, sprite_sheet, animation_steps):
         self.size = data[0]
         self.image_scale = data[1]
         self.offset = data[2]
-        self.flip = False
+        self.flip = flip
         self.animation_list = self.load_images(sprite_sheet, animation_steps)
         self.action = 0  # 0:idle 1:run 2:jump 3:attack1 4:attack2 5:hit 6:death
         self.frame_index = 0
         self.image = self.animation_list[self.action][self.frame_index]
+        self.update_time = pygame.time.get_ticks()
         self.rect = pygame.Rect((x, y, 80, 180))
         self.vel_y = 0
+        self.running = False
         self.jump = False
         self.attacking = False
         self.attack_type = 0
@@ -41,6 +43,8 @@ class Fighter():
         GRAVITY = 2
         dx = 0
         dy = 0
+        self.running = False
+        self.attack_type = 0
 
         # get pressed
 
@@ -52,9 +56,11 @@ class Fighter():
             # movement
             if key[pygame.K_LEFT]:
                 dx = -SPEED
+                self.running = True
 
             if key[pygame.K_RIGHT]:
                 dx = SPEED
+                self.running = True
 
             # jump
             if key[pygame.K_UP] and self.jump == False:
@@ -98,6 +104,32 @@ class Fighter():
         self.rect.x += dx
         self.rect.y += dy
 
+    # handle animation update
+    def update(self):
+        # check what action th player is performing
+        if self.attacking == True:
+            if self.attack_type == 1:
+                self.update_action(3)
+        elif self.attack_type == 2:
+            self.update_action(4)
+        elif self.jump == True:
+            self.update_action(2)
+        elif self.running == True:
+            self.update_action(1)
+        else:
+            self.update_action(0)
+
+        animation_cooldown = 50
+        self.image = self.animation_list[self.action][self.frame_index]
+        # check if enough time has passed since in last update
+        if pygame.time.get_ticks() - self.update_time > animation_cooldown:
+            self.frame_index += 1
+            self.update_time = pygame.time.get_ticks()
+
+        # check if animation has finished
+        if self.frame_index >= len(self.animation_list[self.action]):
+            self.frame_index = 0
+
     def attack(self, surface, target):
         self.attacking = True
         attacking_rect = pygame.Rect(
@@ -108,7 +140,16 @@ class Fighter():
 
         pygame.draw.rect(surface, (0, 255, 0), attacking_rect)
 
+    def update_action(self, new_action):
+        # check if the actiom is different to the previous one
+        if new_action != self.action:
+            self.action = new_action
+            # update the animation settings
+            self.frame_index = 0
+            self.update_time = pygame.time.get_ticks()
+
     def draw(self, surface):
+        img = pygame.transform.flip(self.image, self.flip, False)
         pygame.draw.rect(surface, (255, 0, 0), self.rect)
-        surface.blit(self.image, (self.rect.x -
+        surface.blit(img, (self.rect.x -
                      (self.offset[0] * self.image_scale), self.rect.y - (self.offset[1] * self.image_scale)))
