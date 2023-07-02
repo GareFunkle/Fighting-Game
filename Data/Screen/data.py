@@ -1,6 +1,14 @@
-# Game
+import pygame
 
+pygame.font.init()
+# Game Variable
 GAME_NAME = "Figther"
+INTRO_COUNT = 3
+LAST_COUNT_UPDATE = pygame.time.get_ticks()
+# player score [p1, p2]
+SCORE = [0, 0]
+ROUND_OVER = False
+ROUND_OVER_COOLDOWN = 2000
 
 # Game Resolution with bg an FPS
 SCREEN_WIDTH = 1080
@@ -12,6 +20,21 @@ BG_IMAGE = "assets/images/background/background.jpg"
 RED = (255, 0, 0)
 YELLOW = (255, 255, 0)
 WHITE = (255, 255, 255)
+
+# Icons
+
+VICTORY_IMG = "assets/images/icons/victory.png"
+
+# FONT
+
+COUNT_FONT = pygame.font.Font("assets/fonts/turok.ttf", 80)
+SCORE_FONT = pygame.font.Font("assets/fonts/turok.ttf", 30)
+
+# MuSIC AND SOUND
+
+MUSIC = "assets/audio/music.mp3"
+SWORD = "assets/audio/sword.wav"
+MAGIC = "assets/audio/magic.wav"
 
 
 # PLAYER assets, size and steps
